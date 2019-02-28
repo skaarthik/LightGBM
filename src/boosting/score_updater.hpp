@@ -15,7 +15,7 @@ namespace LightGBM {
 * \brief Used to store and update score for data
 */
 class ScoreUpdater {
-public:
+ public:
   /*!
   * \brief Constructor, will pass a const pointer of dataset
   * \param data This class will bind with this data set
@@ -46,7 +46,6 @@ public:
   }
   /*! \brief Destructor */
   ~ScoreUpdater() {
-
   }
 
   inline bool has_init_score() const { return has_init_score_; }
@@ -109,7 +108,8 @@ public:
   ScoreUpdater& operator=(const ScoreUpdater&) = delete;
   /*! \brief Disable copy */
   ScoreUpdater(const ScoreUpdater&) = delete;
-private:
+
+ private:
   /*! \brief Number of total data */
   data_size_t num_data_;
   /*! \brief Pointer of data set */

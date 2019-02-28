@@ -5,6 +5,8 @@ Here is the guide for the build of LightGBM CLI version.
 
 For the build of Python-package and R-package, please refer to `Python-package`_ and `R-package`_ folders respectively.
 
+Also you can download artifacts of the latest successful build in master branch: |download artifacts|.
+
 **Contents**
 
 -  `Windows <#windows>`__
@@ -144,7 +146,19 @@ Only **Apple Clang** version 8.1 or higher is supported.
 
      git clone --recursive https://github.com/Microsoft/LightGBM ; cd LightGBM
      mkdir build ; cd build
+
+     # For Mojave (10.14)
+     cmake \
+       -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" \
+       -DOpenMP_C_LIB_NAMES="omp" \
+       -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" \
+       -DOpenMP_CXX_LIB_NAMES="omp" \
+       -DOpenMP_omp_LIBRARY=$(brew --prefix libomp)/lib/libomp.dylib \
+       ..
+
+     # For High Sierra or earlier (<= 10.13)
      cmake ..
+
      make -j4
 
 gcc
@@ -434,7 +448,20 @@ Only **Apple Clang** version 8.1 or higher is supported.
 
      git clone --recursive https://github.com/Microsoft/LightGBM ; cd LightGBM
      mkdir build ; cd build
+
+     # For Mojave (10.14)
+     cmake \
+       -DUSE_MPI=ON \
+       -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" \
+       -DOpenMP_C_LIB_NAMES="omp" \
+       -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" \
+       -DOpenMP_CXX_LIB_NAMES="omp" \
+       -DOpenMP_omp_LIBRARY=$(brew --prefix libomp)/lib/libomp.dylib \
+       ..
+
+     # For High Sierra or earlier (<= 10.13)
      cmake -DUSE_MPI=ON ..
+
      make -j4
 
 gcc
@@ -480,7 +507,7 @@ The following dependencies should be installed before compilation:
 
 -  **OpenCL** 1.2 headers and libraries, which is usually provided by GPU manufacture.
 
-   The generic OpenCL ICD packages (for example, Debian package ``cl-icd-libopencl1`` and ``cl-icd-opencl-dev``) can also be used.
+   The generic OpenCL ICD packages (for example, Debian package ``ocl-icd-libopencl1`` and ``ocl-icd-opencl-dev``) can also be used.
 
 -  **libboost** 1.56 or later (1.61 or later is recommended).
 
@@ -522,7 +549,7 @@ Following procedure is for the **MSVC** (Microsoft Visual C++) build.
 
    Further reading and correspondence table: `GPU SDK Correspondence and Device Targeting Table <./GPU-Targets.rst>`__.
 
-3. Install `Boost Binary`_.
+3. Install `Boost Binaries`_.
 
    **Note**: Match your Visual C++ version:
    
@@ -534,8 +561,8 @@ Following procedure is for the **MSVC** (Microsoft Visual C++) build.
 
    .. code::
 
-     Set BOOST_ROOT=C:\local\boost_1_64_0\
-     Set BOOST_LIBRARYDIR=C:\local\boost_1_64_0\lib64-msvc-14.0
+     Set BOOST_ROOT=C:\local\boost_1_63_0\
+     Set BOOST_LIBRARYDIR=C:\local\boost_1_63_0\lib64-msvc-14.0
      git clone --recursive https://github.com/Microsoft/LightGBM
      cd LightGBM
      mkdir build
@@ -543,7 +570,7 @@ Following procedure is for the **MSVC** (Microsoft Visual C++) build.
      cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DUSE_GPU=1 ..
      cmake --build . --target ALL_BUILD --config Release
 
-   **Note**: ``C:\local\boost_1_64_0\`` and ``C:\local\boost_1_64_0\lib64-msvc-14.0`` are locations of your **Boost** binaries. You also can set them to the environment variable to avoid ``Set ...`` commands when build.
+   **Note**: ``C:\local\boost_1_63_0\`` and ``C:\local\boost_1_63_0\lib64-msvc-14.0`` are locations of your **Boost** binaries (assuming you've downloaded 1.63.0 version). You also can set them to the environment variable to avoid ``Set ...`` commands when build.
 
 Docker
 ^^^^^^
@@ -643,6 +670,85 @@ On Linux Java wrapper of LightGBM can be built using **Java**, **SWIG**, **CMake
      cmake -DUSE_SWIG=ON ..
      make -j4
 
+macOS
+^^^^^
+
+On macOS Java wrapper of LightGBM can be built using **Java**, **SWIG**, **CMake** and **Apple Clang** or **gcc**.
+
+First, install `SWIG`_ and **Java** (also make sure that ``JAVA_HOME`` is set properly).
+Then, either follow the **Apple Clang** or **gcc** installation instructions below.
+
+Apple Clang
+***********
+
+Only **Apple Clang** version 8.1 or higher is supported.
+
+1. Install `CMake`_ (3.12 or higher):
+
+   .. code::
+
+     brew install cmake
+
+2. Install **OpenMP**:
+
+   .. code::
+
+     brew install libomp
+
+3. Run the following commands:
+
+   .. code::
+
+     git clone --recursive https://github.com/Microsoft/LightGBM ; cd LightGBM
+     mkdir build ; cd build
+
+     # For Mojave (10.14)
+     cmake \
+       -DUSE_SWIG=ON \
+       -DAPPLE_OUTPUT_DYLIB=ON \
+       -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" \
+       -DOpenMP_C_LIB_NAMES="omp" \
+       -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" \
+       -DOpenMP_CXX_LIB_NAMES="omp" \
+       -DOpenMP_omp_LIBRARY=$(brew --prefix libomp)/lib/libomp.dylib \
+       ..
+
+     # For High Sierra or earlier (<= 10.13)
+     cmake -DUSE_SWIG=ON -DAPPLE_OUTPUT_DYLIB=ON ..
+
+     make -j4
+
+gcc
+***
+
+1. Install `CMake`_ (3.2 or higher):
+
+   .. code::
+
+     brew install cmake
+
+2. Install **gcc**:
+
+   .. code::
+
+     brew install gcc
+
+3. Run the following commands:
+
+   .. code::
+
+     git clone --recursive https://github.com/Microsoft/LightGBM ; cd LightGBM
+     export CXX=g++-7 CC=gcc-7  # replace "7" with version of gcc installed on your machine
+     mkdir build ; cd build
+     cmake -DUSE_SWIG=ON -DAPPLE_OUTPUT_DYLIB=ON ..
+     make -j4
+
+Also, you may want to read `gcc Tips <./gcc-Tips.rst>`__.
+
+
+.. |download artifacts| image:: ./_static/images/artifacts-not-available.svg
+   :target: https://lightgbm.readthedocs.io/en/latest/Installation-Guide.html
+
 .. _Python-package: https://github.com/Microsoft/LightGBM/tree/master/python-package
 
 .. _R-package: https://github.com/Microsoft/LightGBM/tree/master/R-package
@@ -671,6 +777,6 @@ On Linux Java wrapper of LightGBM can be built using **Java**, **SWIG**, **CMake
 
 .. _CUDA Toolkit: https://developer.nvidia.com/cuda-downloads
 
-.. _Boost Binary: https://sourceforge.net/projects/boost/files/boost-binaries/1.64.0/
+.. _Boost Binaries: https://bintray.com/boostorg/release/boost-binaries/_latestVersion#files
 
 .. _SWIG: http://www.swig.org/download.html
